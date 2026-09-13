@@ -1,11 +1,12 @@
-import type {
-  Dispatch,
-  SetStateAction,
+import {
+  type Dispatch,
+  type SetStateAction,
 } from "react";
 
 import type { ITechnology } from "../../types/Technologies.ts";
 
 import { FaStar } from "react-icons/fa";
+import { Bounce, toast } from "react-toastify";
 
 interface ITechnologyCardProps {
   technology: ITechnology;
@@ -20,9 +21,42 @@ const TechnologieCard = ({
   selectedTechnologies,
   setSelectedTechnologies,
 }: ITechnologyCardProps) => {
+
   const isSelected = selectedTechnologies.some(
     (item) => item.id === technology.id,
   );
+
+  const handleAddToStack = () => {
+    const alreadySelected = selectedTechnologies.some(
+      (item) => item.id === technology.id,
+    );
+
+    if (alreadySelected) {
+      toast.warning("This technology is already in your stack", {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "light",
+        transition: Bounce,
+      });
+
+      return;
+    }
+
+    setSelectedTechnologies([
+      ...selectedTechnologies,
+      technology,
+    ]);
+
+    toast.success(
+      `${technology.name} added to your stack`,
+      {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "light",
+        transition: Bounce,
+      },
+    );
+  };
 
   return (
     <div
@@ -71,11 +105,13 @@ const TechnologieCard = ({
         </span>
       </div>
 
-      {/* Button */}
+      {/* Add Button */}
       <button
+        onClick={handleAddToStack}
+        disabled={isSelected}
         className={`mt-4 w-full rounded-lg py-2.5 text-sm font-medium text-white ${
           isSelected
-            ? "bg-pink-200"
+            ? "cursor-not-allowed bg-pink-200"
             : "brand-gradient"
         }`}
       >
