@@ -4,7 +4,9 @@ import Hero from "./components/Hero.tsx";
 import Nav from "./components/Nav.tsx";
 import Technologies from "./components/Technologie/Technologies.tsx";
 
+
 import type { ITechnology } from "./types/Technologies.ts";
+import Footer from "./components/Footer.tsx";
 
 const technologiesFetch = async (): Promise<ITechnology[]> => {
   const res = await fetch("/data.json");
@@ -24,6 +26,8 @@ function App() {
       <Suspense fallback={<h2>Loading.......</h2>}>
         <Technologies technologiesPromise={technologiesPromise} />
       </Suspense>
+      <Footer />
+
     </>
   );
 }

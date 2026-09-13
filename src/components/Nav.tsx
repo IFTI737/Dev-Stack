@@ -8,7 +8,6 @@ const Nav = () => {
   return (
     <nav className="sticky top-0 z-50 border-b border-gray-100 bg-white">
       <div className="mx-auto flex h-[72px] max-w-[1280px] items-center justify-between px-5">
-
         {/* Mobile Menu */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -19,11 +18,7 @@ const Nav = () => {
 
         {/* Logo */}
         <a href="#">
-          <img
-            src={Logo}
-            alt="Dev Stack"
-            className="w-[138px]"
-          />
+          <img src={Logo} alt="Dev Stack" className="w-[138px]" />
         </a>
 
         {/* Desktop Navigation */}
@@ -61,11 +56,9 @@ const Nav = () => {
 
         {/* Auth */}
         <div className="flex items-center gap-5">
-          <button className="text-[16px] text-[#334155]">
-            Sign In
-          </button>
+          <button className="text-[16px] text-[#334155]">Sign In</button>
 
-          <button className="brand-gradient rounded-full px-5 py-2 text-[16px] font-medium text-white">
+          <button className="brand-gradient rounded-full px-5 py-2 text-[16px] font-medium text-white transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
             Sign Up
           </button>
         </div>

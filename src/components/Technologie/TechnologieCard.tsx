@@ -51,7 +51,7 @@ const TechnologieCard = ({
       className={`rounded-2xl border bg-white p-5 transition-all duration-200 ${
         isSelected
           ? "border-pink-400 shadow-md"
-          : "border-gray-200 hover:-translate-y-1 hover:border-pink-400 hover:shadow-md"
+          : "border-gray-200 hover:-translate-y-1 hover:border-pink-400 hover:shadow-md active:-translate-y-1 active:border-pink-400 active:shadow-md"
       }`}
     >
       {/* Icon + Badge */}

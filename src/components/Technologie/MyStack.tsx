@@ -1,8 +1,5 @@
 import { Bounce, toast } from "react-toastify";
-import type {
-  Dispatch,
-  SetStateAction,
-} from "react";
+import type { Dispatch, SetStateAction } from "react";
 
 import type { ITechnology } from "../../types/Technologies.ts";
 
@@ -10,22 +7,28 @@ import StackCard from "./StackCard.tsx";
 
 interface IMyStackProps {
   selectedTechnologies: ITechnology[];
-  setSelectedTechnologies: Dispatch<
-    SetStateAction<ITechnology[]>
-  >;
+  setSelectedTechnologies: Dispatch<SetStateAction<ITechnology[]>>;
 }
-
-
 
 const MyStack = ({
   selectedTechnologies,
   setSelectedTechnologies,
 }: IMyStackProps) => {
+  const handleRemoveAll = () => {
+  if (selectedTechnologies.length === 0) {
+    toast.warning("There are no technologies to remove", {
+      position: "top-center",
+      autoClose: 3000,
+      theme: "light",
+      transition: Bounce,
+    });
 
-    const handleRemoveAll = () => {
+    return;
+  }
+
   setSelectedTechnologies([]);
 
-  toast.success("All technologies removed from your stack", {
+  toast.info("All technologies removed from your stack", {
     position: "top-center",
     autoClose: 3000,
     theme: "light",
@@ -34,10 +37,7 @@ const MyStack = ({
 };
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5">
-
-      <h2 className="text-lg font-bold text-gray-900">
-        Your Stack
-      </h2>
+      <h2 className="text-lg font-bold text-gray-900">Your Stack</h2>
 
       <p className="mt-1 text-xs text-gray-400">
         {selectedTechnologies.length} Technologies Selected
@@ -46,9 +46,7 @@ const MyStack = ({
       {selectedTechnologies.length === 0 ? (
         <div className="mt-7 flex h-[120px] items-center justify-center rounded-xl border border-dashed border-gray-200">
           <div className="text-center">
-            <p className="text-sm text-gray-400">
-              Your stack is empty.
-            </p>
+            <p className="text-sm text-gray-400">Your stack is empty.</p>
 
             <p className="mt-1 text-xs text-gray-300">
               Add technologies to build your stack.
@@ -57,30 +55,25 @@ const MyStack = ({
         </div>
       ) : (
         <div className="mt-6 flex flex-col gap-3">
-            {selectedTechnologies.map(
-                (technology: ITechnology, ind: number) => {
-                    return (
-                        <StackCard
-                            key={ind}
-                            technology={technology}
-                            selectedTechnologies={selectedTechnologies}
-                            setSelectedTechnologies={
-                                setSelectedTechnologies
-                            }
-                        />
-                    );
-                },
-            )}
+          {selectedTechnologies.map((technology: ITechnology, ind: number) => {
+            return (
+              <StackCard
+                key={ind}
+                technology={technology}
+                selectedTechnologies={selectedTechnologies}
+                setSelectedTechnologies={setSelectedTechnologies}
+              />
+            );
+          })}
         </div>
       )}
 
-        <button
-            onClick={handleRemoveAll}
-            className="mt-5 w-full rounded-lg border border-red-300 py-2.5 text-sm font-medium text-red-500 transition hover:bg-red-50"
-            >
-            Remove All
-        </button>
-
+      <button
+        onClick={handleRemoveAll}
+        className="mt-5 w-full rounded-lg border border-red-300 py-2.5 text-sm font-medium text-red-500 transition hover:bg-red-50"
+      >
+        Remove All
+      </button>
     </div>
   );
 };

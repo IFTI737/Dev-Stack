@@ -29,7 +29,7 @@ const StackCard = ({
     );
 
     setSelectedTechnologies(restTechnologies);
-    toast.success(
+    toast.info(
     `${technology.name} removed from your stack`,
         {
             position: "top-center",
