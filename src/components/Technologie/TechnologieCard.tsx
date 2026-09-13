@@ -1,7 +1,4 @@
-import {
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { type Dispatch, type SetStateAction } from "react";
 
 import type { ITechnology } from "../../types/Technologies.ts";
 
@@ -11,9 +8,7 @@ import { Bounce, toast } from "react-toastify";
 interface ITechnologyCardProps {
   technology: ITechnology;
   selectedTechnologies: ITechnology[];
-  setSelectedTechnologies: Dispatch<
-    SetStateAction<ITechnology[]>
-  >;
+  setSelectedTechnologies: Dispatch<SetStateAction<ITechnology[]>>;
 }
 
 const TechnologieCard = ({
@@ -21,7 +16,6 @@ const TechnologieCard = ({
   selectedTechnologies,
   setSelectedTechnologies,
 }: ITechnologyCardProps) => {
-
   const isSelected = selectedTechnologies.some(
     (item) => item.id === technology.id,
   );
@@ -42,28 +36,22 @@ const TechnologieCard = ({
       return;
     }
 
-    setSelectedTechnologies([
-      ...selectedTechnologies,
-      technology,
-    ]);
+    setSelectedTechnologies([...selectedTechnologies, technology]);
 
-    toast.success(
-      `${technology.name} added to your stack`,
-      {
-        position: "top-center",
-        autoClose: 3000,
-        theme: "light",
-        transition: Bounce,
-      },
-    );
+    toast.success(`${technology.name} added to your stack`, {
+      position: "top-center",
+      autoClose: 3000,
+      theme: "light",
+      transition: Bounce,
+    });
   };
 
   return (
     <div
-      className={`rounded-2xl border bg-white p-5 transition-all ${
+      className={`rounded-2xl border bg-white p-5 transition-all duration-200 ${
         isSelected
           ? "border-pink-400 shadow-md"
-          : "border-gray-200"
+          : "border-gray-200 hover:-translate-y-1 hover:border-pink-400 hover:shadow-md"
       }`}
     >
       {/* Icon + Badge */}
@@ -95,9 +83,7 @@ const TechnologieCard = ({
           {technology.category}
         </span>
 
-        <span className="text-gray-500">
-          {technology.difficulty}
-        </span>
+        <span className="text-gray-500">{technology.difficulty}</span>
 
         <span className="flex items-center gap-1 text-gray-600">
           <FaStar className="text-yellow-500" />
@@ -109,15 +95,13 @@ const TechnologieCard = ({
       <button
         onClick={handleAddToStack}
         disabled={isSelected}
-        className={`mt-4 w-full rounded-lg py-2.5 text-sm font-medium text-white ${
+        className={`mt-4 w-full rounded-lg py-2.5 text-sm font-medium text-white transition-all duration-200 ${
           isSelected
             ? "cursor-not-allowed bg-pink-200"
-            : "brand-gradient"
+            : "brand-gradient hover:scale-[1.01] hover:shadow-md"
         }`}
       >
-        {isSelected
-          ? "✓ Added to Stack"
-          : "Add to Stack"}
+        {isSelected ? "✓ Added to Stack" : "Add to Stack"}
       </button>
     </div>
   );

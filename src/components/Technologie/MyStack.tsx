@@ -1,3 +1,4 @@
+import { Bounce, toast } from "react-toastify";
 import type {
   Dispatch,
   SetStateAction,
@@ -14,10 +15,23 @@ interface IMyStackProps {
   >;
 }
 
+
+
 const MyStack = ({
   selectedTechnologies,
   setSelectedTechnologies,
 }: IMyStackProps) => {
+
+    const handleRemoveAll = () => {
+  setSelectedTechnologies([]);
+
+  toast.success("All technologies removed from your stack", {
+    position: "top-center",
+    autoClose: 3000,
+    theme: "light",
+    transition: Bounce,
+  });
+};
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5">
 
@@ -43,22 +57,29 @@ const MyStack = ({
         </div>
       ) : (
         <div className="mt-6 flex flex-col gap-3">
-          {selectedTechnologies.map(
-            (technology: ITechnology, ind: number) => {
-              return (
-                <StackCard
-                  key={ind}
-                  technology={technology}
-                />
-              );
-            },
-          )}
+            {selectedTechnologies.map(
+                (technology: ITechnology, ind: number) => {
+                    return (
+                        <StackCard
+                            key={ind}
+                            technology={technology}
+                            selectedTechnologies={selectedTechnologies}
+                            setSelectedTechnologies={
+                                setSelectedTechnologies
+                            }
+                        />
+                    );
+                },
+            )}
         </div>
       )}
 
-      <button className="mt-5 w-full rounded-lg border border-red-300 py-2.5 text-sm font-medium text-red-500">
-        Remove All
-      </button>
+        <button
+            onClick={handleRemoveAll}
+            className="mt-5 w-full rounded-lg border border-red-300 py-2.5 text-sm font-medium text-red-500 transition hover:bg-red-50"
+            >
+            Remove All
+        </button>
 
     </div>
   );

@@ -1,16 +1,48 @@
-import React from "react";
-import type { ITechnology } from "../../types/Technologies";
+import { Bounce, toast } from "react-toastify";
+import type {
+  Dispatch,
+  SetStateAction,
+} from "react";
+
+import type { ITechnology } from "../../types/Technologies.ts";
+
 import { FaTimes } from "react-icons/fa";
 
 interface IStackCardProps {
   technology: ITechnology;
+  selectedTechnologies: ITechnology[];
+  setSelectedTechnologies: Dispatch<
+    SetStateAction<ITechnology[]>
+  >;
 }
 
-const StackCard = ({ technology }: IStackCardProps) => {
+const StackCard = ({
+  technology,
+  selectedTechnologies,
+  setSelectedTechnologies,
+}: IStackCardProps) => {
+
+  const handleRemoveTechnology = (technology: ITechnology) => {
+    const restTechnologies = selectedTechnologies.filter(
+      (selectedTechnology) =>
+        selectedTechnology.id !== technology.id,
+    );
+
+    setSelectedTechnologies(restTechnologies);
+    toast.success(
+    `${technology.name} removed from your stack`,
+        {
+            position: "top-center",
+            autoClose: 3000,
+            theme: "light",
+            transition: Bounce,
+        },
+    );
+  };
+
   return (
     <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-3 py-2">
       
-      {/* Technology Info */}
       <div className="flex items-center gap-3">
         <img
           src={technology.icon}
@@ -29,8 +61,10 @@ const StackCard = ({ technology }: IStackCardProps) => {
         </div>
       </div>
 
-      {/* Remove Button */}
-      <button className="text-xl text-gray-400 transition hover:text-gray-600">
+      <button
+        onClick={() => handleRemoveTechnology(technology)}
+        className="text-xl text-gray-400 transition hover:text-red-500"
+      >
         <FaTimes />
       </button>
     </div>
