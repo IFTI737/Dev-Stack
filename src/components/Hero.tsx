@@ -1,15 +1,13 @@
-import React from "react";
 import BannerStack from "../assets/banner-stack.png";
 
 const Hero = () => {
   return (
-    <section className="mx-auto max-w-[1140px] px-5 py-12 md:py-16">
-      <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+    <section className="mx-auto max-w-[1280px] px-5 py-12 md:py-14 lg:py-16">
+      <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
 
-        {/* Left Content */}
+        {/* Left */}
         <div>
-          {/* Heading */}
-          <h1 className="text-4xl font-bold leading-tight text-[#111827] sm:text-5xl lg:text-[58px] lg:leading-[1.1]">
+          <h1 className="text-4xl font-bold leading-[1.1] text-[#111827] sm:text-5xl lg:text-[56px]">
             Build Your Ideal
             <br />
             <span className="brand-gradient-text">
@@ -17,14 +15,12 @@ const Hero = () => {
             </span>
           </h1>
 
-          {/* Description */}
-          <p className="mt-5 max-w-[660px] text-base leading-7 text-[#475569] sm:text-lg">
+          <p className="mt-6 max-w-[620px] text-base leading-7 text-[#475569] sm:text-lg">
             Explore frontend, backend, database, and tooling options,
             compare them side by side, and build the perfect technology
             stack for your next project.
           </p>
 
-          {/* Buttons */}
           <div className="mt-7 flex flex-wrap gap-4">
             <button className="brand-gradient rounded-lg px-6 py-3 text-base font-medium text-white">
               Explore Technologies
@@ -36,15 +32,13 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Right Image */}
+        {/* Right */}
         <div className="flex justify-center lg:justify-end">
-          <div className="flex h-[370px] w-[370px] items-center justify-center  sm:h-[420px] sm:w-[420px]">
-            <img
-              src={BannerStack}
-              alt="Development stack"
-             className="w-[300px] sm:w-[350px]"
-            />
-          </div>
+          <img
+            src={BannerStack}
+            alt="Development stack"
+            className="w-[300px] sm:w-[350px] lg:w-[380px]"
+          />
         </div>
 
       </div>

@@ -19,42 +19,38 @@ const Technologies = ({
     setSelectedTechnologies,
   ] = useState<ITechnology[]>([]);
 
-  return (
-    <section className="mx-auto max-w-[1560px] px-5 py-10">
+    return (
+        <section className="mx-auto max-w-[1280px] px-5 pb-16 pt-20">
 
-      {/* Section Heading */}
-      <div className="mb-8">
-        <h2 className="text-[32px] font-bold leading-tight text-[#111827]">
-          Explore the{" "}
-          <span className="brand-gradient-text">
-            Technologies
-          </span>
-        </h2>
+            <div className="mb-8">
+            <h2 className="text-3xl font-bold text-[#111827]">
+                Explore the{" "}
+                <span className="brand-gradient-text">
+                Technologies
+                </span>
+            </h2>
 
-        <p className="mt-1 text-sm text-[#94a3b8]">
-          Pick technologies to build your ideal development stack.
-        </p>
-      </div>
+            <p className="mt-1 text-sm text-[#94a3b8]">
+                Pick technologies to build your ideal development stack.
+            </p>
+            </div>
 
-      {/* Main Content */}
-      <div className="grid items-start gap-5 lg:grid-cols-[1fr_310px]">
+            <div className="grid items-start gap-5 lg:grid-cols-[1fr_310px]">
 
-        {/* Available Technologies */}
-        <AvailableTech
-          technologies={technologies}
-          selectedTechnologies={selectedTechnologies}
-          setSelectedTechnologies={setSelectedTechnologies}
-        />
+            <AvailableTech
+                technologies={technologies}
+                selectedTechnologies={selectedTechnologies}
+                setSelectedTechnologies={setSelectedTechnologies}
+            />
 
-        {/* Your Stack */}
-        <MyStack
-          selectedTechnologies={selectedTechnologies}
-          setSelectedTechnologies={setSelectedTechnologies}
-        />
+            <MyStack
+                selectedTechnologies={selectedTechnologies}
+                setSelectedTechnologies={setSelectedTechnologies}
+            />
 
-      </div>
-    </section>
-  );
+            </div>
+        </section>
+    );
 };
 
 export default Technologies;
