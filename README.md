@@ -95,107 +95,169 @@ Dev-Stack/
 ## 🧠 React Questions
 
 ### 1. What is JSX, and why is it used in React?
-JSX is a way to write HTML-like code inside JavaScript or TypeScript. React uses it because it makes writing and understanding the UI much easier.
+JSX lets me write HTML-looking markup directly inside my TypeScript files, instead of building the UI with plain JavaScript function calls like `React.createElement()`. React uses it because it makes components much easier to read — I can see the actual layout of the page right next to the logic that drives it.
 
-**Example from this project:**
+**Example from this project** — in `TechnologieCard.tsx`, the whole card (image, name, description, stats, button) is written as regular-looking markup with JS expressions mixed in using `{}`:
 ```tsx
-<h2>Explore the Technologies</h2>
+<div className="flex items-start justify-between">
+  <img src={technology.icon} alt={technology.name} className="h-10 w-10 object-contain" />
+  <span className="rounded-full bg-pink-50 px-3 py-1 text-xs text-pink-500">
+    {technology.badge}
+  </span>
+</div>
+
+<h2 className="mt-4 text-lg font-semibold text-gray-900">
+  {technology.name}
+</h2>
 ```
-```tsx
-<button>Add to Stack</button>
-```
+Without JSX, this same card would have to be written as nested `createElement()` calls, which would be much harder to read.
 
 ---
 
 ### 2. What is the difference between props and state?
-Props are data passed from a parent component to a child component. State is data that a component manages and can change on its own.
+**Props** are values passed *into* a component from its parent — the component receiving them can't change them directly. **State** is data a component owns and manages itself, and it can change over time (usually because of user interaction).
 
-**Example from this project:**
+**Example from this project** — `TechnologieCard.tsx` receives everything it needs as props:
 ```tsx
-const [selectedTechnologies, setSelectedTechnologies] =
-  useState<ITechnology[]>([]);
+interface ITechnologyCardProps {
+  technology: ITechnology;
+  selectedTechnologies: ITechnology[];
+  setSelectedTechnologies: Dispatch<SetStateAction<ITechnology[]>>;
+}
+
+const TechnologieCard = ({
+  technology,
+  selectedTechnologies,
+  setSelectedTechnologies,
+}: ITechnologyCardProps) => { ... }
 ```
-`selectedTechnologies` is state, and it gets passed down to child components as props.
+`technology` and `selectedTechnologies` are just data being read — the card doesn't own them. The actual **state** lives one level up, in `Technologies.tsx`:
+```tsx
+const [selectedTechnologies, setSelectedTechnologies] = useState<ITechnology[]>([]);
+```
+`Technologies.tsx` owns this state and hands it down as props to `AvailableTech` and `MyStack`, which hand it further down to `TechnologieCard` and `StackCard`.
 
 ---
 
 ### 3. What does the `useState` hook do, and where did you use it in this project?
-`useState` lets a component store and update data that can change over time.
+`useState` gives a component a piece of data it can remember between renders, plus a function to update it. Whenever that function is called, React re-renders the component with the new value.
 
-**Example from this project:**
+**Example from this project** — in `Technologies.tsx`, `useState` tracks which technologies the user has picked so far:
 ```tsx
-const [selectedTechnologies, setSelectedTechnologies] =
-  useState<ITechnology[]>([]);
+const [
+  selectedTechnologies,
+  setSelectedTechnologies,
+] = useState<ITechnology[]>([]);
 ```
-It's used to track the technologies the user has selected, and also to control the mobile navbar menu.
+This starts as an empty array. Every time a card's "Add to Stack" button is clicked, `setSelectedTechnologies` is called (down in `TechnologieCard.tsx`) with an updated array, and the whole stack UI (the count, the list, the empty-state message) automatically re-renders to match.
+
+I also used `useState` in `App.tsx`, but in a slightly different way — to hold a `Promise` instead of a plain value:
+```tsx
+const [technologiesPromise] = useState(() => technologiesFetch());
+```
+Passing a function to `useState` here means `technologiesFetch()` only runs **once**, when the component first mounts, instead of on every re-render.
 
 ---
 
 ### 4. What does the `useEffect` hook do, and why did you need it to load the JSON data?
-`useEffect` normally runs code after a component renders, and it's commonly used for things like fetching data. However, I did **not use `useEffect`** in this project.
+`useEffect` normally runs some code *after* a component renders — commonly used for side effects like fetching data, since you don't want data-fetching to happen during the render itself.
 
-Instead, I loaded the JSON data using `fetch()` combined with React's `use()` and `Suspense`.
+I actually **didn't use `useEffect`** in this project. Instead, I used React's newer `use()` hook together with `Suspense`, which lets a component "wait" for a promise to resolve without manually managing loading state.
 
-**Example from this project:**
+**Example from this project** — `App.tsx` creates the fetch promise once and wraps the consuming component in `Suspense`:
 ```tsx
 const technologiesFetch = async (): Promise<ITechnology[]> => {
   const res = await fetch("/data.json");
   const data = await res.json();
-
   return data;
 };
+
+function App() {
+  const [technologiesPromise] = useState(() => technologiesFetch());
+
+  return (
+    <Suspense fallback={<h2>Loading.......</h2>}>
+      <Technologies technologiesPromise={technologiesPromise} />
+    </Suspense>
+  );
+}
 ```
+Then inside `Technologies.tsx`, the `use()` hook actually "unwraps" that promise:
+```tsx
+const technologies = use(technologiesPromise);
+```
+While the promise is still pending, React shows the `fallback` (`Loading.......`) automatically — so I get the same result `useEffect` + loading state would normally give me, but with less boilerplate.
 
 ---
 
 ### 5. Why does every item in a `.map()` list need a unique `key` prop?
-The `key` prop helps React identify which item in a list is which, so it can correctly update, add, or remove items without re-rendering everything.
+React uses `key` behind the scenes to match each item in a list to the same DOM element across re-renders. Without a stable key, React can lose track of which item is which — this can cause wrong data to show up, broken animations, or components not updating correctly when the list changes.
 
-**Example from this project:**
+**Example from this project** — both `AvailableTech.tsx` and `MyStack.tsx` render lists with `.map()`:
 ```tsx
 {technologies.map((technology: ITechnology, ind: number) => {
   return (
     <TechnologieCard
       key={ind}
       technology={technology}
+      selectedTechnologies={selectedTechnologies}
+      setSelectedTechnologies={setSelectedTechnologies}
     />
   );
 })}
 ```
-Here, `.map()` loops through all the technologies and renders a `TechnologieCard` for each one.
+I'm currently using the array index (`ind`) as the key, which technically works but isn't ideal — if the list order ever changes, index-based keys can get mismatched. Since every technology already has a unique `id` (from `ITechnology`), a better version would be:
+```tsx
+<TechnologieCard
+  key={technology.id}
+  technology={technology}
+  ...
+/>
+```
+This way, each card's key is tied to the actual technology, not its position in the array — the safer approach for `.map()` lists.
 
 ---
 
 ### 6. What is conditional rendering? Show one place you used it.
-Conditional rendering means showing different UI depending on a condition.
+Conditional rendering means showing different UI depending on some condition, instead of always rendering the same thing.
 
-**Example from this project (empty stack message):**
+**Example from this project** — in `MyStack.tsx`, I check whether any technologies have been selected yet, and show either an empty-state message or the actual list:
 ```tsx
 {selectedTechnologies.length === 0 ? (
-  <p>Your stack is empty.</p>
+  <div className="mt-7 flex h-[120px] items-center justify-center rounded-xl border border-dashed border-gray-200">
+    <div className="text-center">
+      <p className="text-sm text-gray-400">Your stack is empty.</p>
+      <p className="mt-1 text-xs text-gray-300">
+        Add technologies to build your stack.
+      </p>
+    </div>
+  </div>
 ) : (
-  <div>
-    {/* selected technologies */}
+  <div className="mt-6 flex flex-col gap-3">
+    {selectedTechnologies.map((technology, ind) => (
+      <StackCard key={ind} technology={technology} ... />
+    ))}
   </div>
 )}
 ```
-If no technologies are selected, the "Your stack is empty" message is shown instead of the list.
+There's also a second, simpler case of conditional rendering right on the "Add to Stack" button in `TechnologieCard.tsx`, where the button's text and style change based on `isSelected`:
+```tsx
+<button disabled={isSelected} className={isSelected ? "cursor-not-allowed bg-pink-200" : "brand-gradient"}>
+  {isSelected ? "✓ Added to Stack" : "Add to Stack"}
+</button>
+```
 
 ---
 
 ### 7. How do you pass data from a parent component to a child component, and how does a child send something back to the parent?
-A parent passes data to a child using props. A child can send data back by calling a function that the parent passed down to it.
+A parent passes data down through props. To send something back **up**, the parent also passes down a function as a prop — the child calls that function, and since the function was defined in the parent (often a state setter), calling it updates the parent's state, which then flows back down to every child that uses it.
 
-**Example from this project:**
+**Example from this project — the full chain:**
 
-In `Technologies.tsx`, the parent holds the state:
+`Technologies.tsx` (the parent) owns the state and passes both the data and the setter down to `AvailableTech`:
 ```tsx
-const [selectedTechnologies, setSelectedTechnologies] =
-  useState<ITechnology[]>([]);
-```
+const [selectedTechnologies, setSelectedTechnologies] = useState<ITechnology[]>([]);
 
-It passes the state and setter function down to `AvailableTech`:
-```tsx
 <AvailableTech
   technologies={technologies}
   selectedTechnologies={selectedTechnologies}
@@ -203,14 +265,24 @@ It passes the state and setter function down to `AvailableTech`:
 />
 ```
 
-Then the child component can update it directly:
+`AvailableTech.tsx` just forwards these further down to each `TechnologieCard`:
 ```tsx
-setSelectedTechnologies([
-  ...selectedTechnologies,
-  technology,
-]);
+<TechnologieCard
+  key={ind}
+  technology={technology}
+  selectedTechnologies={selectedTechnologies}
+  setSelectedTechnologies={setSelectedTechnologies}
+/>
 ```
-This updates the state in the parent, and React re-renders the UI with the new data.
+
+Finally, `TechnologieCard.tsx` (the child, several levels deep) calls `setSelectedTechnologies` when the button is clicked — this is the child "sending data back up":
+```tsx
+const handleAddToStack = () => {
+  setSelectedTechnologies([...selectedTechnologies, technology]);
+  toast.success(`${technology.name} added to your stack`, { ... });
+};
+```
+Because `setSelectedTechnologies` actually belongs to state defined in `Technologies.tsx`, calling it there updates the state in the parent — and React automatically re-renders `Technologies.tsx`, `MyStack.tsx`, and every other component that depends on `selectedTechnologies`.
 
 ---
 
